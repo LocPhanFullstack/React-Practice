@@ -17,6 +17,7 @@ const ModalAddNew = ({ show, handleClose, handleUpdateTable }) => {
             toast.success('🦄 Successfully!');
             handleUpdateTable({ first_name: name, id: res.id });
         } else {
+            toast.error('🦄 Something Went Wrong!');
         }
     };
 
@@ -40,7 +41,7 @@ const ModalAddNew = ({ show, handleClose, handleUpdateTable }) => {
                         <div className="mb-3">
                             <label className="form-label">Job</label>
                             <input
-                                type="password"
+                                type="text"
                                 className="form-control"
                                 value={job}
                                 onChange={(e) => setJob(e.target.value)}

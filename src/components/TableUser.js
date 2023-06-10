@@ -4,6 +4,7 @@ import { fetchAllUser } from '../services/userService';
 import ReactPaginate from 'react-paginate';
 import ModalAddNew from './ModalAddNew';
 import ModalEdit from './ModalEdit';
+import _ from 'lodash';
 
 const TableUser = () => {
     const [listUser, setListUser] = useState([]);
@@ -21,7 +22,7 @@ const TableUser = () => {
         setIsShowModalEdit(false);
     };
 
-    const handleUpdateUser = (user) => {
+    const handleUpdateTable = (user) => {
         setListUser([user, ...listUser]);
     };
 
@@ -41,6 +42,13 @@ const TableUser = () => {
     const handleEditUser = (user) => {
         setDataUserEdit(user);
         setIsShowModalEdit(true);
+    };
+
+    const handleEditUserFromModal = (user) => {
+        let listUserCopy = _.cloneDeep(listUser);
+        let index = listUser.findIndex((item) => item.id === user.id);
+        listUserCopy[index].first_name = user.first_name;
+        setListUser(listUserCopy);
     };
 
     useEffect(() => {
@@ -110,9 +118,14 @@ const TableUser = () => {
             <ModalAddNew
                 show={isShowModalAddNew}
                 handleClose={handleCloseAddNew}
-                handleUpdateTable={handleUpdateUser}
+                handleUpdateTable={handleUpdateTable}
             />
-            <ModalEdit show={isShowModalEdit} handleClose={handleCloseEdit} dataUserEdit={dataUserEdit} />
+            <ModalEdit
+                show={isShowModalEdit}
+                handleClose={handleCloseEdit}
+                dataUserEdit={dataUserEdit}
+                handleEditUserFromModal={handleEditUserFromModal}
+            />
         </>
     );
 };
