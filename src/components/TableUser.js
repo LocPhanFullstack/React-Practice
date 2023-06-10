@@ -5,7 +5,7 @@ import { fetchAllUser } from '../services/userService';
 import ReactPaginate from 'react-paginate';
 import ModalAddNew from './ModalAddNew';
 import ModalEdit from './ModalEdit';
-import _ from 'lodash';
+import _, { debounce } from 'lodash';
 import ModalConfirm from './ModalConfirm';
 
 const TableUser = () => {
@@ -76,6 +76,17 @@ const TableUser = () => {
         setListUser(listUserCopy);
     };
 
+    const handleSearch = debounce((e) => {
+        let term = e.target.value;
+        if (term) {
+            let listUserCopy = _.cloneDeep(listUser);
+            listUserCopy = listUserCopy.filter((item) => item.email.includes(term));
+            setListUser(listUserCopy);
+        } else {
+            getUsers(1);
+        }
+    }, 1000);
+
     useEffect(() => {
         getUsers(1);
     }, []);
@@ -88,6 +99,15 @@ const TableUser = () => {
                     Add a new user
                 </button>
             </div>
+            <div className="col-4 mb-3">
+                <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search user by email"
+                    onChange={(e) => handleSearch(e)}
+                />
+            </div>
+
             <Table striped bordered hover>
                 <thead>
                     <tr>
