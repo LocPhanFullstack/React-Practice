@@ -5,6 +5,7 @@ import ReactPaginate from 'react-paginate';
 import ModalAddNew from './ModalAddNew';
 import ModalEdit from './ModalEdit';
 import _ from 'lodash';
+import ModalConfirm from './ModalConfirm';
 
 const TableUser = () => {
     const [listUser, setListUser] = useState([]);
@@ -13,13 +14,13 @@ const TableUser = () => {
     const [isShowModalAddNew, setIsShowModalAddNew] = useState(false);
     const [isShowModalEdit, setIsShowModalEdit] = useState(false);
     const [dataUserEdit, setDataUserEdit] = useState({});
+    const [isShowModalDelete, setIsShowModalDelete] = useState(false);
+    const [dataUserDelete, setDataUserDelete] = useState({});
 
-    const handleCloseAddNew = () => {
+    const handleClose = () => {
         setIsShowModalAddNew(false);
-    };
-
-    const handleCloseEdit = () => {
         setIsShowModalEdit(false);
+        setIsShowModalDelete(false);
     };
 
     const handleUpdateTable = (user) => {
@@ -49,6 +50,11 @@ const TableUser = () => {
         let index = listUser.findIndex((item) => item.id === user.id);
         listUserCopy[index].first_name = user.first_name;
         setListUser(listUserCopy);
+    };
+
+    const handleDeleteUser = (user) => {
+        setIsShowModalDelete(true);
+        setDataUserDelete(user);
     };
 
     useEffect(() => {
@@ -87,7 +93,9 @@ const TableUser = () => {
                                         <button className="btn btn-warning" onClick={() => handleEditUser(item)}>
                                             Edit
                                         </button>
-                                        <button className="btn btn-danger mx-2">Delete</button>
+                                        <button className="btn btn-danger mx-2" onClick={() => handleDeleteUser(item)}>
+                                            Delete
+                                        </button>
                                     </td>
                                 </tr>
                             );
@@ -115,17 +123,14 @@ const TableUser = () => {
                 activeClassName="active"
             />
 
-            <ModalAddNew
-                show={isShowModalAddNew}
-                handleClose={handleCloseAddNew}
-                handleUpdateTable={handleUpdateTable}
-            />
+            <ModalAddNew show={isShowModalAddNew} handleClose={handleClose} handleUpdateTable={handleUpdateTable} />
             <ModalEdit
                 show={isShowModalEdit}
-                handleClose={handleCloseEdit}
+                handleClose={handleClose}
                 dataUserEdit={dataUserEdit}
                 handleEditUserFromModal={handleEditUserFromModal}
             />
+            <ModalConfirm show={isShowModalDelete} handleClose={handleClose} dataUserDelete={dataUserDelete} />
         </>
     );
 };
