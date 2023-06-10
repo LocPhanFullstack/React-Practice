@@ -57,6 +57,13 @@ const TableUser = () => {
         setDataUserDelete(user);
     };
 
+    const handleDeleteUserFromModal = (user) => {
+        let listUserCopy = _.cloneDeep(listUser);
+        listUserCopy = listUser.filter((item) => item.id !== user.id);
+        setListUser(listUserCopy);
+    };
+    // console.log(listUser);
+
     useEffect(() => {
         getUsers(1);
     }, []);
@@ -130,7 +137,12 @@ const TableUser = () => {
                 dataUserEdit={dataUserEdit}
                 handleEditUserFromModal={handleEditUserFromModal}
             />
-            <ModalConfirm show={isShowModalDelete} handleClose={handleClose} dataUserDelete={dataUserDelete} />
+            <ModalConfirm
+                handleDeleteUserFromModal={handleDeleteUserFromModal}
+                show={isShowModalDelete}
+                handleClose={handleClose}
+                dataUserDelete={dataUserDelete}
+            />
         </>
     );
 };
