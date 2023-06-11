@@ -7,7 +7,9 @@ import ModalAddNew from './ModalAddNew';
 import ModalEdit from './ModalEdit';
 import _, { debounce } from 'lodash';
 import ModalConfirm from './ModalConfirm';
-import { CSVLink, CSVDownload } from 'react-csv';
+import { CSVLink } from 'react-csv';
+import Papa from 'papaparse';
+import { toast } from 'react-toastify';
 
 const TableUser = () => {
     const [listUser, setListUser] = useState([]);
@@ -106,6 +108,50 @@ const TableUser = () => {
         }
     };
 
+    const handleImportCSV = (e) => {
+        if (e.target && e.target.files && e.target.files[0]) {
+            let file = e.target.files[0];
+            if (file.type !== 'text/csv') {
+                toast.error('Only accept csv files...');
+                return;
+            }
+            Papa.parse(file, {
+                complete: function (results) {
+                    let rawCSV = results.data;
+                    if (rawCSV.length > 0) {
+                        if (rawCSV[0] && rawCSV[0].length === 3) {
+                            if (
+                                rawCSV[0][0] !== 'email' ||
+                                rawCSV[0][1] !== 'first_name' ||
+                                rawCSV[0][2] !== 'last_name'
+                            ) {
+                                toast.error('Wrong format header CSV file!!!');
+                            } else {
+                                let result = [];
+                                rawCSV.map((item, i) => {
+                                    if (i > 0 && item.length === 3) {
+                                        let obj = {};
+                                        obj.email = item[0];
+                                        obj.first_name = item[1];
+                                        obj.last_name = item[2];
+                                        result.push(obj);
+                                    }
+                                });
+                                setListUser(result);
+                                console.log(result);
+                            }
+                        } else {
+                            toast.error('Wrong format CSV file!!!');
+                        }
+                    } else {
+                        toast.error('Not found data on CSV file!!!');
+                    }
+                    console.log('Finish', results.data);
+                },
+            });
+        }
+    };
+
     useEffect(() => {
         getUsers(1);
     }, []);
@@ -118,7 +164,7 @@ const TableUser = () => {
                     <label className="btn btn-warning" htmlFor="test">
                         <i className="fa-solid fa-file-import"></i> Import
                     </label>
-                    <input id="test" type="file" hidden />
+                    <input id="test" type="file" hidden onChange={(e) => handleImportCSV(e)} />
                     <CSVLink
                         data={dataExport}
                         asyncOnClick={true}
