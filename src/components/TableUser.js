@@ -7,6 +7,7 @@ import ModalAddNew from './ModalAddNew';
 import ModalEdit from './ModalEdit';
 import _, { debounce } from 'lodash';
 import ModalConfirm from './ModalConfirm';
+import { CSVLink, CSVDownload } from 'react-csv';
 
 const TableUser = () => {
     const [listUser, setListUser] = useState([]);
@@ -91,13 +92,29 @@ const TableUser = () => {
         getUsers(1);
     }, []);
 
+    const csvData = [
+        ['firstname', 'lastname', 'email'],
+        ['Ahmed', 'Tomi', 'ah@smthing.co.com'],
+        ['Raed', 'Labes', 'rl@smthing.co.com'],
+        ['Yezzi', 'Min l3b', 'ymin@cocococo.com'],
+    ];
+
     return (
         <>
             <div className="my-3 add-new">
                 <h4>List Users:</h4>
-                <button className="btn btn-primary" onClick={() => setIsShowModalAddNew(true)}>
-                    Add a new user
-                </button>
+                <div>
+                    <label className="btn btn-warning" htmlFor="test">
+                        <i className="fa-solid fa-file-import"></i> Import
+                    </label>
+                    <input id="test" type="file" hidden />
+                    <CSVLink data={csvData} filename={'users.csv'} className="btn btn-primary mx-3">
+                        <i className="fa-solid fa-file-arrow-down"></i> Export
+                    </CSVLink>
+                    <button className="btn btn-info" onClick={() => setIsShowModalAddNew(true)}>
+                        <i className="fa solid fa-circle-plus"></i> Add a new user
+                    </button>
+                </div>
             </div>
             <div className="col-4 mb-3">
                 <input
