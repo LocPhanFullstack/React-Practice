@@ -21,6 +21,7 @@ const TableUser = () => {
 
     const [sortBy, setSortBy] = useState('asc');
     const [sortField, setSortField] = useState('id');
+    const [dataExport, setDataExport] = useState([]);
 
     const handleClose = () => {
         setIsShowModalAddNew(false);
@@ -68,9 +69,9 @@ const TableUser = () => {
         setListUser(listUserCopy);
     };
 
-    const handleSort = (sortBy, sortField) => {
-        setSortBy(sortBy);
-        setSortField(sortField);
+    const handleSort = (sort, field) => {
+        setSortBy(sort);
+        setSortField(field);
 
         let listUserCopy = _.cloneDeep(listUser);
         listUserCopy = _.orderBy(listUserCopy, [sortField], [sortBy]);
@@ -88,16 +89,26 @@ const TableUser = () => {
         }
     }, 1000);
 
+    const getUsersExport = (event, done) => {
+        let result = [];
+        if (listUser && listUser.length > 0) {
+            result.push(['ID', 'Email', 'First Name', 'Last Name']);
+            listUser.map((item, i) => {
+                let arr = [];
+                arr[0] = item.id;
+                arr[1] = item.email;
+                arr[2] = item.first_name;
+                arr[3] = item.last_name;
+                result.push(arr);
+            });
+            setDataExport(result);
+            done();
+        }
+    };
+
     useEffect(() => {
         getUsers(1);
     }, []);
-
-    const csvData = [
-        ['firstname', 'lastname', 'email'],
-        ['Ahmed', 'Tomi', 'ah@smthing.co.com'],
-        ['Raed', 'Labes', 'rl@smthing.co.com'],
-        ['Yezzi', 'Min l3b', 'ymin@cocococo.com'],
-    ];
 
     return (
         <>
@@ -108,7 +119,13 @@ const TableUser = () => {
                         <i className="fa-solid fa-file-import"></i> Import
                     </label>
                     <input id="test" type="file" hidden />
-                    <CSVLink data={csvData} filename={'users.csv'} className="btn btn-primary mx-3">
+                    <CSVLink
+                        data={dataExport}
+                        asyncOnClick={true}
+                        onClick={getUsersExport}
+                        filename={'users.csv'}
+                        className="btn btn-primary mx-3"
+                    >
                         <i className="fa-solid fa-file-arrow-down"></i> Export
                     </CSVLink>
                     <button className="btn btn-info" onClick={() => setIsShowModalAddNew(true)}>
