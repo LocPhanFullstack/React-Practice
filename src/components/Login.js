@@ -2,23 +2,42 @@ import React from 'react';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { loginAPI } from '../services/userService';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const Login = () => {
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isShowPassword, setIsShowPassword] = useState(false);
+    const [showLoading, setShowLoading] = useState(false);
 
     const handleLogin = async () => {
         if (!email || !password) {
             toast.error('Email/Password is required!!!');
             return;
         }
+        setShowLoading(true);
         let res = await loginAPI(email, password);
         if (res && res.token) {
             localStorage.setItem('token', res.token);
+            toast.success('Login Successfully!!!');
+            navigate('/users');
+        } else {
+            if (res && res.status === 400) {
+                toast.error('User not found!!!');
+            }
         }
-        console.log(res);
+        setShowLoading(false);
     };
+
+    useEffect(() => {
+        let token = localStorage.getItem('token');
+        if (token) {
+            navigate('/');
+        }
+    }, []);
 
     return (
         <div className="login-container col-12 col-sm-4">
@@ -48,7 +67,7 @@ const Login = () => {
                 className={email && password ? 'active' : ''}
                 disabled={email && password ? false : true}
             >
-                Login
+                {showLoading && <i className="fa-solid fa-sync fa-spin"></i>} Login
             </button>
             <div className="back">
                 <i className="fa-solid fa-angles-left"></i> Go Back
