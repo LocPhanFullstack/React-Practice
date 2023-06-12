@@ -6,8 +6,19 @@ import TableUser from './components/TableUser';
 import Container from 'react-bootstrap/Container';
 import { ToastContainer } from 'react-toastify';
 import Login from './components/Login';
+import { useContext } from 'react';
+import { UserContext } from './context/UserContext';
+import { useEffect } from 'react';
 
 function App() {
+    const { loginContext } = useContext(UserContext);
+
+    useEffect(() => {
+        if (localStorage.getItem('token')) {
+            loginContext(localStorage.getItem('email'), localStorage.getItem('token'));
+        }
+    }, []);
+
     return (
         <>
             <div className="app-container">
