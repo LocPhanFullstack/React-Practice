@@ -22,7 +22,7 @@ const Login = () => {
             return;
         }
         setShowLoading(true);
-        let res = await loginAPI(email, password);
+        let res = await loginAPI(email.trim(), password);
         if (res && res.token) {
             loginContext(email, res.token);
             toast.success('Login Successfully!!!');
@@ -39,12 +39,11 @@ const Login = () => {
         navigate('/');
     };
 
-    // useEffect(() => {
-    //     let token = localStorage.getItem('token');
-    //     if (token) {
-    //         navigate('/');
-    //     }
-    // }, []);
+    const handlePressEnter = async (e) => {
+        if (e && e.key === 'Enter') {
+            await handleLogin();
+        }
+    };
 
     return (
         <div className="login-container col-12 col-sm-4">
@@ -57,11 +56,13 @@ const Login = () => {
                 placeholder="Email or Username..."
             />
             <div className="input-2">
+                <div className="text">Password</div>
                 <input
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     type={isShowPassword === true ? 'text' : 'password'}
                     placeholder="Password..."
+                    onKeyDown={(e) => handlePressEnter(e)}
                 />
                 <i
                     className={isShowPassword === true ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash'}
