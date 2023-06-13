@@ -21,14 +21,13 @@ const Header = () => {
         navigate('/login');
         toast.success('Logout Successfully!!!');
     };
-    let token = localStorage.getItem('token');
+    // let token = localStorage.getItem('token');
 
-    useEffect(() => {
-        if (!token) {
-            navigate('/login');
-        }
-    }, []);
-    console.log(user.auth);
+    // useEffect(() => {
+    //     if (!token) {
+    //         navigate('/login');
+    //     }
+    // }, []);
 
     return (
         <div>
@@ -46,9 +45,7 @@ const Header = () => {
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
-                        {((user && user.auth) ||
-                            window.location.pathname === '/' ||
-                            window.location.pathname === '/users') && (
+                        {user && user.auth && (
                             <>
                                 <Nav className="me-auto">
                                     <NavLink className="nav-link" to="/">
@@ -58,7 +55,6 @@ const Header = () => {
                                         Manage Users
                                     </NavLink>
                                 </Nav>
-
                                 <Nav>
                                     {user && user.auth === true && (
                                         <span className="nav-link">Welcome, ${user.email}</span>

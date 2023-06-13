@@ -79,3 +79,11 @@ code {
         }
     }
 }
+
+.back-to-login {
+    cursor: pointer;
+
+    &:hover {
+        opacity: 0.7;
+    }
+}
