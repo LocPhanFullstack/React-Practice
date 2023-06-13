@@ -1,39 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { loginAPI } from '../services/userService';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import { UserContext } from '../context/UserContext';
-import { useContext } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { handleLoginRedux } from '../redux/actions/userAction';
 
 const Login = () => {
     const navigate = useNavigate();
-    const { loginContext } = useContext(UserContext);
+    const dispatch = useDispatch();
+    const isLoading = useSelector((state) => state.user.isLoading);
+    const user = useSelector((state) => state.user.account);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isShowPassword, setIsShowPassword] = useState(false);
-    const [showLoading, setShowLoading] = useState(false);
 
     const handleLogin = async () => {
         if (!email || !password) {
             toast.error('Email/Password is required!!!');
             return;
         }
-        setShowLoading(true);
-        let res = await loginAPI(email.trim(), password);
-        if (res && res.token) {
-            loginContext(email, res.token);
-            toast.success('Login Successfully!!!');
-            navigate('/users');
-        } else {
-            if (res && res.status === 400) {
-                toast.error('User not found!!!');
-            }
-        }
-        setShowLoading(false);
+
+        dispatch(handleLoginRedux(email, password));
+        navigate('/');
     };
+
+    useEffect(() => {
+        if (user && user.auth === true) {
+            navigate('/');
+        }
+    }, [user]);
 
     const handleGoBack = () => {
         navigate('/');
@@ -75,7 +71,7 @@ const Login = () => {
                 className={email && password ? 'active' : ''}
                 disabled={email && password ? false : true}
             >
-                {showLoading && <i className="fa-solid fa-sync fa-spin"></i>} Login
+                {isLoading && <i className="fa-solid fa-sync fa-spin"></i>} Login
             </button>
             <div className="back">
                 <i className="fa-solid fa-angles-left"></i>

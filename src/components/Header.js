@@ -1,33 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import logoApp from '../assets/images/logo192.png';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { useContext } from 'react';
-import { UserContext } from '../context/UserContext';
-import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { handleLogoutRedux } from '../redux/actions/userAction';
 
 const Header = () => {
-    const { logout, user } = useContext(UserContext);
+    const user = useSelector((state) => state.user.account);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     // const [hideHeader, setHideHeader] = useState(true);
 
     const handleLogout = () => {
-        logout();
-        navigate('/login');
-        toast.success('Logout Successfully!!!');
+        dispatch(handleLogoutRedux());
     };
-    // let token = localStorage.getItem('token');
 
-    // useEffect(() => {
-    //     if (!token) {
-    //         navigate('/login');
-    //     }
-    // }, []);
+    useEffect(() => {
+        if (user && user.auth === false) {
+            navigate('/login');
+        }
+    }, [user]);
 
     return (
         <div>

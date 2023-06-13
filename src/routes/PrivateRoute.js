@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../context/UserContext';
 import { Alert } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 
 const PrivateRoute = ({ children }) => {
-    const { user } = useContext(UserContext);
+    const user = useSelector((state) => state.user.account);
     const navigate = useNavigate();
 
     const handleGoBack = () => {
